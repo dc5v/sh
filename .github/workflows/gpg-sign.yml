@@ -6,16 +6,23 @@ on:
     paths:
       - "*.sh"
 
+permissions:
+  contents: write   # ← 요게 핵심 (push 허용)
+
 jobs:
   selective-sign:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 2
+          persist-credentials: true  # (기본값 true, 명시해도 됨)
 
       - name: Import GPG private key
-        run: echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+        run: |
+          gpg --batch --import <<'EOF'
+          $GPG_PRIVATE_KEY
+          EOF
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
@@ -23,25 +30,22 @@ jobs:
         run: |
           files=$(git diff --name-only HEAD~1 HEAD | grep '\.sh$' || true)
           [ -z "$files" ] && echo "No .sh changes, skipping." && exit 0
-
           for f in $files; do
             [ -f "$f" ] || continue
-
             echo "- Filename: $f"
             sha256sum "$f" > "$f.sha256"
-            gpg --batch --yes --pinentry-mode loopback --passphrase "" --armor --detach-sign --output "$f.asc" "$f"
+            gpg --batch --yes --pinentry-mode loopback --passphrase "" \
+                --armor --detach-sign --output "$f.asc" "$f"
           done
 
-      - name: Commit, Push
+      - name: Commit & Push
         run: |
           git config user.name "${GIT_BOT_NAME}"
           git config user.email "${GIT_BOT_EMAIL}"
           git add *.asc *.sha256 || true
-
-          if ! git diff --cached --quiet; then
-            git commit -m "GPG signed via giuthub workflow"
-            git push
-          fi
+          git diff --cached --quiet && echo "No changes, skip commit." && exit 0
+          git commit -m "GPG signed via github workflow"
+          git push
         env:
           GIT_BOT_NAME: ${{ vars.GIT_BOT_NAME }}
           GIT_BOT_EMAIL: ${{ vars.GIT_BOT_EMAIL }}
