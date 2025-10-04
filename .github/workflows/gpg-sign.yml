@@ -1,0 +1,47 @@
+name: Sign only changed .sh files
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "*.sh"
+
+jobs:
+  selective-sign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Import GPG private key
+        run: echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
+      - name: GPG Sign only changed files
+        run: |
+          files=$(git diff --name-only HEAD~1 HEAD | grep '\.sh$' || true)
+          [ -z "$files" ] && echo "No .sh changes, skipping." && exit 0
+
+          for f in $files; do
+            [ -f "$f" ] || continue
+
+            echo "- Filename: $f"
+            sha256sum "$f" > "$f.sha256"
+            gpg --batch --yes --pinentry-mode loopback --passphrase "" --armor --detach-sign --output "$f.asc" "$f"
+          done
+
+      - name: Commit, Push
+        run: |
+          git config user.name "${GIT_BOT_NAME}"
+          git config user.email "${GIT_BOT_EMAIL}"
+          git add *.asc *.sha256 || true
+
+          if ! git diff --cached --quiet; then
+            git commit -m "GPG signed via giuthub workflow"
+            git push
+          fi
+        env:
+          GIT_BOT_NAME: ${{ vars.GIT_BOT_NAME }}
+          GIT_BOT_EMAIL: ${{ vars.GIT_BOT_EMAIL }}
