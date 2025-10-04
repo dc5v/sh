@@ -20,9 +20,7 @@ jobs:
 
       - name: Import GPG private key
         run: |
-          gpg --batch --import <<'EOF'
-          $GPG_PRIVATE_KEY
-          EOF
+          printf '%s' "${GPG_PRIVATE_KEY}" | gpg --batch --import
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
