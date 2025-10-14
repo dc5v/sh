@@ -1,0 +1,40 @@
+name: Generate Tree
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  generate-tree:
+    runs-on: ubuntu-latest
+    env:
+      BOT_NAME: ${{ vars.BOT_NAME }}
+      BOT_EMAIL: ${{ vars.BOT_EMAIL }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate tree
+        run: |
+          tree -a -I '.git|.github' > tree.txt || {
+            sudo apt-get update && sudo apt-get install -y tree
+            tree -a -I '.git|.github' > tree.txt
+            
+            echo -e "404 File not found\n\n" > 404.html
+            echo "<pre>" >> 404.html
+            echo tree.txt >> 404.html
+            echo "</pre>" >> 404.html
+          }
+
+      - name: Commit and push tree file
+        run: |
+          git config --local user.email "$BOT_EMAIL"
+          git config --local user.name "$BOT_NAME"
+          git add tree.txt
+          git add 404.html
+          git diff --staged --quiet || git commit -m "Update Tree"
+          git push
