@@ -4,8 +4,9 @@
 ├── CNAME
 ├── README.md
 ├── extensions
-│   └── unpack.sh
+│   ├── unpack.sh
+│   └── unpack.sh.sha256
 ├── gpg.pub.key
 └── tree.txt
 
-2 directories, 7 files
+2 directories, 8 files
