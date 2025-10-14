@@ -5,23 +5,23 @@ on:
     paths:
       - '**.sh'
 
+permissions:
+  contents: write
+
 jobs:
   generate-checksum:
     runs-on: ubuntu-latest
     environment: production
-    
-    permissions:
-      contents: write 
-
     env:
-      BOT_NAME: "bot"
-      BOT_EMAIL: "bot@noreply.dc5v.github.com"
+      BOT_NAME: ${{ vars.BOT_NAME }}
+      BOT_EMAIL: ${{ vars.BOT_EMAIL }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: true
 
       - name: Checksums
         run: |
