@@ -41,5 +41,8 @@ jobs:
           git config --local user.name "$BOT_NAME"
           git add tree.txt
           git add 404.html
+
+          git pull origin main
+
           git diff --staged --quiet || git commit -m "[Workflow] Update Tree"
           git push
