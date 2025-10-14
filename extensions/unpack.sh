@@ -7,6 +7,7 @@ set -euo pipefail
 #
 # ID: unpack.sh
 # Author: kinomoto <dev@dc5v.com>
+# -----
 # Usage: ./unpack.sh [-p|--purge] [-o|--overwrite] [-a|--all-extensions] <file|dir>
 # Options:
 #   -p, --purge           Delete the original archive after successful extraction.
