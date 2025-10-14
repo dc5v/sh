@@ -37,8 +37,8 @@ jobs:
             fi
           done
 
-          git config --global user.email "$BOT_EMAIL"
-          git config --global user.name "$BOT_NAME"
+          git config --local user.email "$BOT_EMAIL"
+          git config --local user.name "$BOT_NAME"
           git add *.sha256 **/*.sha256 || true
 
           if git diff --staged --quiet; then
