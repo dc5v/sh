@@ -9,6 +9,10 @@ jobs:
   generate-checksum:
     runs-on: ubuntu-latest
     environment: production
+    
+    permissions:
+      contents: write 
+
     env:
       BOT_NAME: "bot"
       BOT_EMAIL: "bot@noreply.dc5v.github.com"
