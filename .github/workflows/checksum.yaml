@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     env:
-      BOT_NAME: ${{ vars.BOT_NAME }}
-      BOT_EMAIL: ${{ vars.BOT_EMAIL }}
+      BOT_NAME: "bot"
+      BOT_EMAIL: "bot@noreply.dc5v.github.com"
 
     steps:
       - name: Checkout
