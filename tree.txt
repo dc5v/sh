@@ -1,4 +1,5 @@
 .
+├── .gitignore
 ├── 404.html
 ├── CNAME
 ├── README.md
@@ -7,4 +8,4 @@
 ├── gpg.pub.key
 └── tree.txt
 
-2 directories, 6 files
+2 directories, 7 files
