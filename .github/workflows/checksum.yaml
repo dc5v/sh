@@ -8,9 +8,10 @@ on:
 jobs:
   generate-checksum:
     runs-on: ubuntu-latest
+    environment: production
     env:
-      BOT_NAME: ${{vars.BOT_NAME }}
-      BOT_EMAIL: ${{vars.BOT_EMAIL}}
+      BOT_NAME: ${{ vars.BOT_NAME }}
+      BOT_EMAIL: ${{ vars.BOT_EMAIL }}
 
     steps:
       - name: Checkout
@@ -36,8 +37,8 @@ jobs:
             fi
           done
 
-          git config --local user.email "$BOT_EMAIL"
-          git config --local user.name "$BOT_NAME"
+          git config --global user.email "$BOT_EMAIL"
+          git config --global user.name "$BOT_NAME"
           git add *.sha256 **/*.sha256 || true
 
           if git diff --staged --quiet; then
