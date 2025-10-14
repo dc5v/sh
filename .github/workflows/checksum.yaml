@@ -49,5 +49,5 @@ jobs:
             exit 0
           fi
 
-          git commit -m "Updated SHA256 checksums"
+          git commit -m "[Workflow] Updated SHA256 checksums"
           git push
