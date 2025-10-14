@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     env:
-      BOT_NAME: "bot"
-      BOT_EMAIL: "bot@noreply.dc5v.github.com"
+      BOT_NAME: ${{ vars.BOT_NAME }}
+      BOT_EMAIL: ${{ vars.BOT_EMAIL }}
 
     steps:
       - name: Checkout repository
@@ -22,7 +22,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: true
-          
+
       - name: Generate tree
         run: |
           tree -a -I '.git|.github' > tree.txt || {
@@ -31,7 +31,7 @@ jobs:
             
             echo -e "404 File not found\n\n" > 404.html
             echo "<pre>" >> 404.html
-            echo tree.txt >> 404.html
+            cat tree.txt >> 404.html
             echo "</pre>" >> 404.html
           }
 
